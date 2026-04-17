@@ -493,7 +493,7 @@ if (res.ok) {
     }
 
     const normalizedPhone = phoneClean.replace(/\D/g, '');
-    const waUrl = `https://wa.me/${normalizedPhone}?text=${encodeURIComponent(msg)}`;
+    const waUrl = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
 
     const waHidden = document.getElementById('whatsapp_link');
     if (waHidden) waHidden.value = waUrl;
