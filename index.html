@@ -344,31 +344,31 @@
     <div class="cta__box">
       <h2>Prueba gratis 14 días</h2>
       <p>Déjanos tus datos y te contactamos.</p>
-      <form id="lead-form" method="post" action="https://docs.google.com/forms/d/e/1FAIpQLSfOyNwdF1lK8ljEAd6ZK77LaNrXcLScXH0njYp8orBVL0KphA/formResponse">
+      <form id="lead-form" method="post">
         <div class="grid2">
           <label>Nombre
-            <input required id="first_name" name="entry.1214786495" placeholder="Andrea" />
+            <input required id="first_name" name="entry.1274159542" placeholder="Sebastian" />
           </label>
           <label>Apellido
-            <input required id="last_name" name="entry.2222222222" placeholder="Patino" />
+            <input required id="last_name" name="entry.110172957" placeholder="Vivas" />
           </label>
           <label>Email
-            <input required type="email" name="entry.3333333333" placeholder="tu@email.com" />
+            <input required type="email" name="entry.714567174" placeholder="tu@email.com" />
           </label>
           <label>Teléfono (con indicativo país)
-            <input required name="entry.4444444444" placeholder="+34 600 123 456" />
+            <input required name="entry.728592466" placeholder="+34 600 123 456" />
           </label>
         </div>
         <!-- Hidden UTM fields auto-filled -->
-        <input type="hidden" name="entry.5555555555" id="utm_source" />
-        <input type="hidden" name="entry.6666666666" id="utm_medium" />
-        <input type="hidden" name="entry.7777777777" id="utm_campaign" />
-        <input type="hidden" name="entry.8888888888" id="utm_content" />
-        <input type="hidden" name="entry.9999999999" id="utm_term" />
-        <input type="hidden" name="entry.1010101010" id="utm_id" />
+        <input type="hidden" name="entry.2144108090" id="utm_source" />
+        <input type="hidden" name="entry.964105222" id="utm_medium" />
+        <input type="hidden" name="entry.1923745302" id="utm_campaign" />
+        <input type="hidden" name="entry.172212880" id="utm_content" />
+        <input type="hidden" name="entry.171977719" id="utm_term" />
+        <input type="hidden" name="entry.1169383291" id="utm_id" />
         <!-- Full name + WhatsApp-ready -->
-        <input type="hidden" name="entry.XXXXXXXX" id="full_name" />
-        <input type="hidden" name="entry.XXXXXXXX" id="whatsapp_link" />
+        <input type="hidden" name="entry.1214786495" id="full_name" />
+        <input type="hidden" id="whatsapp_link" />
         <br>
         <button class="btn primary block" type="submit">Prueba gratis 14 días</button>
         <p class="form-note">Al enviar aceptas nuestra Política de Privacidad.</p>
@@ -427,6 +427,7 @@ function getParam(name){ return new URLSearchParams(window.location.search).get(
 
 // Full name + WhatsApp + submit handler
 const form = document.getElementById('lead-form');
+form.action = FORM_CONFIG.form_url;
 const cta = document.getElementById('cta-whatsapp');
 const WA_NUMBER = '34603938659'; // +34 603 93 86 59 sin signos
 
