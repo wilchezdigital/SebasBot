@@ -419,6 +419,7 @@ const FORM_CONFIG = {
 
 // --- util: read params
 function getParam(name){ return new URLSearchParams(window.location.search).get(name) || ""; }
+
 // Fill UTMs
 ['source','medium','campaign','content','term','id'].forEach(k=>{
   const v = getParam('utm_'+k);
@@ -426,97 +427,89 @@ function getParam(name){ return new URLSearchParams(window.location.search).get(
   if(el) el.value = v;
 });
 
-// Full name + WhatsApp + submit handler
+// Base config
 const form = document.getElementById('lead-form');
 form.action = FORM_CONFIG.form_url;
-const cta = document.getElementById('cta-whatsapp');
-const WA_NUMBER = '34603938659'; // +34 603 93 86 59 sin signos
 
+const cta = document.getElementById('cta-whatsapp');
+const WA_NUMBER = '34603938659';
+
+// CTA botón
 if (cta) {
   const baseMsg = 'Hola, estoy interesado en la prueba gratis de 14 días del chatbot.';
   cta.href = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(baseMsg)}`;
 }
 
 if (form) {
-  form.addEventListener('input', e => {
-const fn = document.getElementById('first_name').value.trim();
-const ln = document.getElementById('last_name').value.trim();
+
+  // Nombre completo automático
+  form.addEventListener('input', () => {
+    const fn = document.getElementById('first_name').value.trim();
+    const ln = document.getElementById('last_name').value.trim();
     const full = (fn + ' ' + ln).trim();
     const fullField = document.getElementById('full_name');
     if (fullField) fullField.value = full;
   });
 
   form.addEventListener('submit', async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  // 🔴 VALIDACIÓN TELÉFONO
-  const phoneInput = document.querySelector('input[name="entry.728592466"]');
-  const phone = phoneInput.value.trim();
-  const phoneClean = phone.replace(/\s+/g, '');
+    // VALIDACIÓN TELÉFONO
+    const phoneInput = document.querySelector('input[name="entry.728592466"]');
+    const phone = phoneInput.value.trim();
+    const phoneClean = phone.replace(/\s+/g, '');
 
-  if (!/^\+?[1-9]\d{6,14}$/.test(phoneClean)) {
-    alert("Introduce un teléfono válido. Ej: +34600123456 o 34600123456");
-    return;
-  }
+    if (!/^\+?[1-9]\d{6,14}$/.test(phoneClean)) {
+      alert("Introduce un teléfono válido. Ej: +34600123456 o 34600123456");
+      return;
+    }
 
+    phoneInput.value = phoneClean;
 
-  phoneInput.value = phoneClean;
+    // FormData
+    const fd = new FormData(form);
 
-  // ✅ AHORA SI, CONTINUAR
-  const fd = new FormData(form);
-    
-const firstName = document.getElementById('first_name').value.trim();
-const lastName  = document.getElementById('last_name').value.trim();
+    const firstName = document.getElementById('first_name').value.trim();
+    const lastName  = document.getElementById('last_name').value.trim();
     const fullName  = (firstName + ' ' + lastName).trim();
 
-    let webhookOk = false;
+    // MENSAJE (SIEMPRE IGUAL, sin lógica falsa)
+    const msg = `Hola, soy ${fullName || 'un interesado'}. Ya envié mis datos y quiero la prueba gratis de 14 días del chatbot.`;
 
-    // 1) Intentar enviar datos al webhook
-    try {
-      const res = await fetch(form.action, {
-  method: form.method || 'POST',
-  body: fd,
-});
-
-if (res.ok) {
-  webhookOk = true;
-} else {
-  webhookOk = false;
-}
-    } catch (err) {
-      console.error('Error enviando datos al webhook', err);
-      webhookOk = false;
-    }
-
-    // 2) Armar mensaje según el resultado del webhook
-    let msg;
-    if (webhookOk) {
-      msg = `Hola, soy ${fullName || 'un interesado'}. Ya he enviado mis datos por el formulario y estoy interesado en la prueba gratis de 14 días del chatbot.`;
-    } else {
-      msg = `Hola, soy ${fullName || 'un interesado'}. Estoy interesado en la prueba gratis de 14 días del chatbot, pero el formulario no pudo enviar mis datos. ¿Podemos seguir por aquí?`;
-    }
-
+    // WA LINK
     const waUrl = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
 
+    // 🔴 GUARDAR EN GOOGLE FORMS (ANTES DEL FETCH)
     fd.set('entry.44797240', waUrl);
 
+    // ENVIAR A GOOGLE FORMS
+    try {
+      await fetch(form.action, {
+        method: 'POST',
+        body: fd,
+      });
+    } catch (err) {
+      console.error('Error enviando form', err);
+    }
+
+    // REDIRECCIÓN A WHATSAPP
     setTimeout(() => {
-  window.location.href = waUrl;
-}, 200);
+      window.location.href = waUrl;
+    }, 200);
+
   });
 }
 
 // Year
 document.getElementById('year').textContent = new Date().getFullYear();
 
-// Live chat SIMULATOR (no backend): 2 turns, then CTA
+// Live chat SIMULATOR
 (function(){
   const box = document.getElementById('liveChat');
   const input = document.getElementById('liveInput');
   const ctaLive = document.querySelector('.live-input a.btn.primary');
   if(!box || !input) return;
 
-  let turns = 0; // user messages counted
   let done = false;
 
   function add(type, text){
@@ -525,15 +518,14 @@ document.getElementById('year').textContent = new Date().getFullYear();
     d.textContent = text;
     box.appendChild(d);
     box.scrollTop = box.scrollHeight;
-    return d;
   }
+
   function addHTML(html){
     const w = document.createElement('div');
     w.className = 'msg bot';
     w.innerHTML = html;
     box.appendChild(w);
     box.scrollTop = box.scrollHeight;
-    return w;
   }
 
   function firstName(v){
@@ -541,34 +533,28 @@ document.getElementById('year').textContent = new Date().getFullYear();
     return p[0]||'allí';
   }
 
-  function finish(name){
-    done = true; turns = 999;
-    const html = `Para probarlo de verdad, haz clic aquí ↓<br><br>` +
-                 `<a class="btn primary" href="#demo">Prueba gratis 14 días</a>`;
+  function finish(){
+    done = true;
+    const html = `Para probarlo de verdad, haz clic aquí ↓<br><br>
+    <a class="btn primary" href="#demo">Prueba gratis 14 días</a>`;
     addHTML(html);
     input.disabled = true;
-    input.placeholder = 'Demo simulada. Usa el botón para continuar →';
-    if(ctaLive) ctaLive.textContent = 'Prueba gratis 14 días';
   }
 
   input.addEventListener('keydown', (e)=>{
-    if(e.key !== 'Enter' || !input.value.trim()) return;
-    if(done) return;
+    if(e.key !== 'Enter' || !input.value.trim() || done) return;
 
     const v = input.value.trim();
     input.value='';
     add('user', v);
-    turns++;
 
-    if(turns === 1){
-      add('bot', `Encantado, ${firstName(v)} 🙌`);
-      setTimeout(()=> add('bot', 'Esta es una simulación rápida. Te muestro cómo guardamos datos y agendamos por WhatsApp.'), 400);
-      setTimeout(()=> finish(firstName(v)), 1300);
-    } else {
-      finish(firstName(v));
-    }
+    add('bot', `Encantado, ${firstName(v)} 🙌`);
+    setTimeout(()=> add('bot', 'Esta es una simulación rápida.'), 400);
+    setTimeout(()=> finish(), 1200);
   });
+
 })();
+
 </script>
 </body>
 </html>
