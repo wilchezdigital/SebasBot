@@ -143,7 +143,7 @@
       <h1>Tu <span class="grad">Chatbot con IA</span> que vende y atiende 24/7 por WhatsApp </h1>
       <p>Responde como tú, captura datos de tus conversaciones y agenda citas automáticamente. Todo personalizado.</p>
       <div class="cta-row">
-        <a class="btn primary" id="cta-whatsapp" target="_blank" href="https://wa.me/34603938659?text=Hola%20quiero%20probar%20el%20chatbot%20IA">Prueba gratis 14 días</a>
+        <a class="btn primary" id="cta-whatsapp" target="_blank" href="https://wa.me/34603938659?text=Hola%20quiero%20probar%20SebasBot%20IA">Prueba gratis 14 días</a>
         <a class="btn ghost" href="#demo">Hablemos por WhatsApp</a>
       </div>
       <div class="trust" style="color:var(--muted);display:flex;gap:12px;align-items:center;">
@@ -432,11 +432,11 @@ const form = document.getElementById('lead-form');
 form.action = FORM_CONFIG.form_url;
 
 const cta = document.getElementById('cta-whatsapp');
-const WA_NUMBER = '34603938659';
+const WA_NUMBER = '34603938659'; // TU número
 
-// CTA botón
+// CTA botón (usuario → tú)
 if (cta) {
-  const baseMsg = 'Hola, estoy interesado en la prueba gratis de 14 días del chatbot.';
+  const baseMsg = 'Hola, estoy interesado en la prueba gratis de 14 días de SebasBot.';
   cta.href = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(baseMsg)}`;
 }
 
@@ -473,16 +473,17 @@ if (form) {
     const lastName  = document.getElementById('last_name').value.trim();
     const fullName  = (firstName + ' ' + lastName).trim();
 
-    // MENSAJE (SIEMPRE IGUAL, sin lógica falsa)
-    const msg = `Hola, soy ${fullName || 'un interesado'}. Ya envié mis datos y quiero la prueba gratis de 14 días del chatbot.`;
+    // 🔹 LINK HACIA EL USUARIO (para CRM)
+    const userPhone = phoneClean.replace('+','');
 
-    // WA LINK
-    const waUrl = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
+    const followMsg = `Hola ${fullName}, te contacto por tu interés en SebasBot.`;
 
-    // 🔴 GUARDAR EN GOOGLE FORMS (ANTES DEL FETCH)
-    fd.set('entry.44797240', waUrl);
+    const waUserLink = `https://wa.me/${userPhone}?text=${encodeURIComponent(followMsg)}`;
 
-    // ENVIAR A GOOGLE FORMS
+    // 🔴 GUARDAR EN GOOGLE FORMS (link al usuario)
+    fd.set('entry.44797240', waUserLink);
+
+    // ENVIAR FORM
     try {
       await fetch(form.action, {
         method: 'POST',
@@ -492,9 +493,13 @@ if (form) {
       console.error('Error enviando form', err);
     }
 
-    // REDIRECCIÓN A WHATSAPP
+    // 🔹 REDIRECCIÓN A TU WHATSAPP (flujo venta)
+    const msgToYou = `Hola, soy ${fullName || 'un interesado'}. Ya envié mis datos y quiero la prueba gratis de 14 días de SebasBot.`;
+
+    const waYou = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msgToYou)}`;
+
     setTimeout(() => {
-      window.location.href = waUrl;
+      window.location.href = waYou;
     }, 200);
 
   });
