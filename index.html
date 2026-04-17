@@ -492,7 +492,8 @@ if (res.ok) {
       msg = `Hola, soy ${fullName || 'un interesado'}. Estoy interesado en la prueba gratis de 14 días del chatbot, pero el formulario no pudo enviar mis datos. ¿Podemos seguir por aquí?`;
     }
 
-    const waUrl = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
+    const normalizedPhone = phoneClean.replace(/\D/g, '');
+    const waUrl = `https://wa.me/${normalizedPhone}?text=${encodeURIComponent(msg)}`;
 
     const waHidden = document.getElementById('whatsapp_link');
     if (waHidden) waHidden.value = waUrl;
