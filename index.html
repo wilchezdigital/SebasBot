@@ -446,9 +446,21 @@ const ln = document.getElementById('last_name').value.trim();
   });
 
   form.addEventListener('submit', async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    const fd = new FormData(form);
+  // 🔴 VALIDACIÓN TELÉFONO
+  const phoneInput = document.querySelector('input[name="entry.728592466"]');
+  const phone = phoneInput.value.trim();
+  const phoneClean = phone.replace(/\s+/g, '');
+
+  if (!/^\+?\d{7,15}$/.test(phoneClean)) {
+    alert("Introduce un teléfono válido con indicativo país. Ej: +34600123456");
+    return;
+  }
+
+  // ✅ AHORA SI, CONTINUAR
+  const fd = new FormData(form);
+    
 const firstName = document.getElementById('first_name').value.trim();
 const lastName  = document.getElementById('last_name').value.trim();
     const fullName  = (firstName + ' ' + lastName).trim();
