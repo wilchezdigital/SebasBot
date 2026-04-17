@@ -453,8 +453,8 @@ const ln = document.getElementById('last_name').value.trim();
   const phone = phoneInput.value.trim();
   const phoneClean = phone.replace(/\s+/g, '');
 
-  if (!/^\+?\d{7,15}$/.test(phoneClean)) {
-    alert("Introduce un teléfono válido con indicativo país. Ej: +34600123456");
+  if (!/^(\+?\d{7,15})$/.test(phoneClean)) {
+    alert("Introduce un teléfono válido. Ej: +34600123456 o 34600123456");
     return;
   }
 
