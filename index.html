@@ -368,7 +368,6 @@
         <input type="hidden" name="entry.1169383291" id="utm_id" />
         <!-- Full name + WhatsApp-ready -->
         <input type="hidden" name="entry.1214786495" id="full_name" />
-        <input type="hidden" name="entry.44797240" id="whatsapp_link" />
 
         <br>
         <button class="btn primary block" type="submit">Prueba gratis 14 días</button>
@@ -499,8 +498,7 @@ if (res.ok) {
 
     const waUrl = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
 
-    const waHidden = document.getElementById('whatsapp_link');
-    if (waHidden) waHidden.value = waUrl;
+    fd.set('entry.44797240', waUrl);
 
     setTimeout(() => {
   window.location.href = waUrl;
