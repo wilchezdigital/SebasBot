@@ -368,7 +368,8 @@
         <input type="hidden" name="entry.1169383291" id="utm_id" />
         <!-- Full name + WhatsApp-ready -->
         <input type="hidden" name="entry.1214786495" id="full_name" />
-        <input type="hidden" id="whatsapp_link" />
+        <input type="hidden" name="entry.728592466" id="whatsapp_link" />
+
         <br>
         <button class="btn primary block" type="submit">Prueba gratis 14 días</button>
         <p class="form-note">Al enviar aceptas nuestra Política de Privacidad.</p>
@@ -453,10 +454,13 @@ const ln = document.getElementById('last_name').value.trim();
   const phone = phoneInput.value.trim();
   const phoneClean = phone.replace(/\s+/g, '');
 
-  if (!/^(\+?\d{7,15})$/.test(phoneClean)) {
+  if (!/^\+?[1-9]\d{6,14}$/.test(phoneClean)) {
     alert("Introduce un teléfono válido. Ej: +34600123456 o 34600123456");
     return;
   }
+
+
+  phoneInput.value = phoneClean;
 
   // ✅ AHORA SI, CONTINUAR
   const fd = new FormData(form);
@@ -492,7 +496,6 @@ if (res.ok) {
       msg = `Hola, soy ${fullName || 'un interesado'}. Estoy interesado en la prueba gratis de 14 días del chatbot, pero el formulario no pudo enviar mis datos. ¿Podemos seguir por aquí?`;
     }
 
-    const normalizedPhone = phoneClean.replace(/\D/g, '');
     const waUrl = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
 
     const waHidden = document.getElementById('whatsapp_link');
